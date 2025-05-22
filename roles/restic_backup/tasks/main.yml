@@ -1,0 +1,5 @@
+- name: Include setup tasks
+  include_tasks: setup.yml
+
+- name: Include create_backup tasks
+  include_tasks: create_backup.yml

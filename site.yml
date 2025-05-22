@@ -1,0 +1,4 @@
+---
+- import_playbook: playbooks/common.yml
+- import_playbook: playbooks/adler_backup_server.yml
+- import_playbook: playbooks/adler_server.yml

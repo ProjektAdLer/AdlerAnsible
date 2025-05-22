@@ -1,0 +1,19 @@
+---
+- name: Base configuration like system update, packages, users, ...
+  hosts: all
+  become: yes
+  tasks:
+    - name: Include system_update role
+      ansible.builtin.include_role:
+        name: ../roles/system_update
+
+    - name: Include common role
+      ansible.builtin.include_role:
+        name: ../roles/common
+      vars:
+        common_user_ssh_pubkey_ansible: "{{ user_ssh_pubkey_ansible }}"
+        common_users:
+          - name: "markus"
+            password: "{{ vault_user_password_markus }}"
+            ssh_pubkey: "{{ user_ssh_pubkey_markus }}"
+            passwordless_sudo: true

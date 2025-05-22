@@ -1,0 +1,38 @@
+---
+
+- name: Check for updates
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  changed_when: false
+
+- name: List available updates
+  ansible.builtin.shell: apt list --upgradable
+  register: update_list
+  changed_when: false
+
+#- name: List available updates
+#  ansible.builtin.apt:
+#    update_cache: yes
+#    upgrade: dist
+#    cache_valid_time: 3600
+#  register: update_list
+#  check_mode: yes
+
+- name: Install updates if available
+  block:
+    - name: Print available updates
+      ansible.builtin.debug:
+        msg: "{{ update_list.stdout_lines }}"
+
+    - name: Prompt for confirmation to apply updates
+      ansible.builtin.pause:
+        prompt: "Do you want to apply the updates listed above? (yes/no)"
+      register: update_confirmation
+
+    - name: Apply updates
+      ansible.builtin.apt:
+        upgrade: dist
+        autoremove: yes
+      when: update_confirmation.user_input == 'yes'
+  when: update_list.stdout_lines | length > 1

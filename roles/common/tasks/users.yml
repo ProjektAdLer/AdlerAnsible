@@ -1,0 +1,36 @@
+---
+
+- name: be sure user exists
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    state: present
+    shell: /bin/bash
+    groups: "sudo"
+    append: yes
+    password: "{{ item.password | password_hash('sha512', 'nfa3iohnak7z4') if item.password is defined else omit }}"  # random value is the salt
+
+- name: create .ssh directory
+  ansible.builtin.file:
+    path: "/home/{{ item.name }}/.ssh"
+    state: directory
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: '0700'
+
+- name: copy public key
+  ansible.builtin.copy:
+    content: "{{ item.ssh_pubkey }}"
+    dest: "/home/{{ item.name }}/.ssh/authorized_keys"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: '0600'
+
+- name: Allow passwordless sudo for user markus
+  ansible.builtin.copy:
+    content: '{{ item.name }} ALL=(ALL) NOPASSWD:ALL'
+    dest: /etc/sudoers.d/markus
+    owner: root
+    group: root
+    mode: '0440'
+    validate: 'visudo -cf %s'
+  when: (item.passwordless_sudo | default(false)) | bool

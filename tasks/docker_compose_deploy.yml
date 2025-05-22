@@ -1,0 +1,73 @@
+---
+- name: Ensure rsync is installed (required for synchronize module)
+  ansible.builtin.apt:
+    name: rsync
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400 # 1 day
+
+- name: Ensure the target folder exists
+  ansible.builtin.file:
+    path: "/opt/docker-apps/{{ dc_deploy_project_name }}"
+    state: directory
+
+- name: Sync project files to target folder
+  ansible.posix.synchronize:
+    src: "{{ lookup('env', 'PWD') }}/files/docker_compose_apps/{{ dc_deploy_compose_folder }}/"
+    dest: "/opt/docker-apps/{{ dc_deploy_project_name }}/"
+    rsync_opts:
+      - "--exclude=*.j2"
+      - "--chown=root:root"
+      - "--checksum"  # required as times are not synced -> files always detected as changed
+      - "--no-times"
+    delete: no
+    recursive: yes
+  register: copy_result
+
+- name: Ensure folder has at least u=rwx, g=rx and o has no write
+  ansible.builtin.command: >
+    chmod --changes u+rwx,g+rx,o-w /opt/docker-apps/{{ dc_deploy_project_name }}
+  register: chmod_out
+  changed_when: chmod_out.stdout != ""
+
+- name: Process template files recursively (including subdirectories)
+  block:
+    - name: Ensure template subdirectories exist
+      ansible.builtin.file:
+        path: "/opt/docker-apps/{{ dc_deploy_project_name }}/{{ item.path | dirname }}"
+        state: directory
+        owner: root
+        group: root
+      with_community.general.filetree: "{{ lookup('env', 'PWD') }}/files/docker_compose_apps/{{ dc_deploy_compose_folder }}"
+      when:
+        - item.state == 'file'
+        - item.src is match('.*\.j2$')
+
+    - name: Process j2 template files
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "/opt/docker-apps/{{ dc_deploy_project_name }}/{{ item.path | regex_replace('\\.j2$', '') }}"
+        owner: root
+        group: root
+      with_community.general.filetree: "{{ lookup('env', 'PWD') }}/files/docker_compose_apps/{{ dc_deploy_compose_folder }}"
+      when:
+        - item.state == 'file'
+        - item.src is match('.*\.j2$')
+      register: template_result
+
+- name: Set fact for file changes
+  ansible.builtin.set_fact:
+    files_changed: "{{ (copy_result.results | default([]) | selectattr('changed', 'defined') | selectattr('changed') | list | length > 0) or 
+                       (template_result.results | default([]) | selectattr('changed', 'defined') | selectattr('changed') | list | length > 0) }}"
+
+- name: Update compose state
+  community.docker.docker_compose_v2:
+    project_src: "/opt/docker-apps/{{ dc_deploy_project_name }}"
+    state: '{{ dc_deploy_docker_compose_state }}'
+
+- name: Restart compose if files changed
+  ansible.builtin.command:
+    cmd: "docker compose -f /opt/docker-apps/{{ dc_deploy_project_name }}/docker-compose.yml restart"
+  when:
+    - files_changed | bool
+    - dc_deploy_docker_compose_state | default('present') == 'present'
