@@ -7,13 +7,16 @@
       ansible.builtin.include_role:
         name: ../roles/system_update
 
+    - name: Create system users
+      ansible.builtin.include_role:
+        name: ../roles/user_management
+      vars:
+        user_management_users: "{{ system_users }}"
+
     - name: Include common role
       ansible.builtin.include_role:
         name: ../roles/common
       vars:
         common_user_ssh_pubkey_ansible: "{{ user_ssh_pubkey_ansible }}"
-        common_users:
-          - name: "markus"
-            password: "{{ vault_user_password_markus }}"
-            ssh_pubkey: "{{ user_ssh_pubkey_markus }}"
-            passwordless_sudo: true
+        common_user_password_hash_ansible: "{{vault_user_password_hash_ansible}}"
+        common_system_packages: "{{ system_packages }}"

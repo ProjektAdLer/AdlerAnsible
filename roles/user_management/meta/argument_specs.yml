@@ -1,0 +1,35 @@
+argument_specs:
+  main:
+    short_description: Create users
+    options:
+      user_management_users:
+        type: list
+        required: true
+        elements: dict
+        description: List of users to create
+        options:
+          username:
+            type: str
+            required: true
+            description: Name of the user to create
+          ssh_pubkey:
+            type: str
+            required: true
+            description: Public SSH key for the user
+          password_hash:
+            type: str
+            required: false
+            description: Password hash for the user (optional)
+          update_password:
+            type: bool
+            default: false
+            description: Whether to update the password if the user already exists
+          passwordless_sudo:
+            type: bool
+            default: false
+            description: Whether the user should have passwordless sudo access
+          groups:
+            type: list
+            required: false
+            elements: str
+            description: List of groups to which the user should be added. The user will be added to these groups, he will not be removed from other groups.

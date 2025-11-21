@@ -1,3 +1,0 @@
----
-- name: Main Adler Server specific playbook
-  hosts: adler_server

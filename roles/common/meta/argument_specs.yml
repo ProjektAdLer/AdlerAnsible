@@ -1,0 +1,17 @@
+argument_specs:
+  main:
+    short_description: Common tasks for all servers like default packages, ansible user, ssh hardening
+    options:
+      common_user_password_hash_ansible:
+        type: str
+        required: true
+        description: Hashed password for the ansible user from vault
+      common_user_ssh_pubkey_ansible:
+        type: str
+        required: true
+        description: Public SSH key for the ansible user
+      common_system_packages:
+        type: list
+        required: false
+        elements: str
+        description: List of common system packages to install

@@ -2,27 +2,20 @@
 
 - name: base packages
   ansible.builtin.apt:
-    name:
-    - htop
-    - sudo
-    - nano
-    - screen
-    - zstd
-    - iftop
-    - tree
+    name: "{{ common_system_packages | default([]) }}"
     update_cache: yes
     cache_valid_time: 86400 # 1 day
 
-- name: ensure users exist and setup SSH keys
-  ansible.builtin.include_tasks: users.yml
-  loop:
-  - name: "ansible"
-    ssh_pubkey: "{{ common_user_ssh_pubkey_ansible }}"
-    passwordless_sudo: true
-
-- name: ensure users exist and setup SSH keys
-  ansible.builtin.include_tasks: users.yml
-  loop: "{{ common_users }}"
+- name: ensure ansible user exists
+  ansible.builtin.include_role:
+    name: ../roles/user_management
+  vars:
+    user_management_users:
+      - username: "ansible"
+        password_hash: "{{ common_user_password_hash_ansible }}"
+        groups: sudo
+        update_password: true
+        ssh_pubkey: "{{ common_user_ssh_pubkey_ansible }}"
 
 - block:
     - name: Disable SSH login for root user
@@ -45,4 +38,5 @@
         regexp: '^PasswordAuthentication'
         line: 'PasswordAuthentication no'
         state: present
+
   notify: restart_ssh_service
