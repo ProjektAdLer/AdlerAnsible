@@ -21,3 +21,5 @@ system_packages:
   - iftop
   - tree
 
+system_updates.upgrade_enabled: true
+system_updates.auto_upgrade_enabled: false

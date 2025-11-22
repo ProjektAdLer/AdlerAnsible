@@ -1,0 +1,10 @@
+argument_specs:
+  main:
+    short_description: Install system updates
+    author:
+      - Markus Heck
+    options:
+      system_update_auto_upgrade_enabled:
+        type: bool
+        default: false
+        description: Whether to enable automatic system upgrades without confirmation

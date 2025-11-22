@@ -6,6 +6,7 @@
     - name: Include system_update role
       ansible.builtin.include_role:
         name: ../roles/system_update
+      when: system_updates.upgrade_enabled | default(false)
 
     - name: Create system users
       ansible.builtin.include_role:

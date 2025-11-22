@@ -1,6 +1,6 @@
 ---
 - name: Adler Backup Server specific playbook
-  hosts: adler_backup_server
+  hosts: backup_server
   become: yes
   tasks:
     - name: Ensure rsync is installed
@@ -32,5 +32,5 @@
         restic_rest_server_user: "storage"
         restic_rest_server_group: "storage"
         restic_rest_server_repositories:
-          - username: "adler"
-            password: "{{ restic_rest_server_secrets.adler_server.password }}"
+          - username: "main_server"
+            password: "{{ restic_rest_server_secrets.main_server.password }}"
