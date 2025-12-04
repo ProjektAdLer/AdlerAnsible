@@ -1,0 +1,48 @@
+services:
+  wiki:
+    ports:
+      - 8082:3000
+    image: requarks/wiki:2
+    depends_on:
+      - db
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres_wikijs_admin
+      DB_PASS: wth!bqz0zym7MFD@jrd
+      DB_NAME: wiki
+    restart: unless-stopped
+    networks:
+      - traefik_gateway
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wiki.rule=Host(`wiki.projekt-adler.eu`)"
+      - "traefik.http.routers.wiki.tls=true"
+      - "traefik.http.routers.wiki.tls.certresolver=le"
+      - "traefik.http.routers.wiki.entrypoints=websecure"
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: wiki
+      POSTGRES_PASSWORD: wth!bqz0zym7MFD@jrd
+      POSTGRES_USER: postgres_wikijs_admin
+    logging:
+      driver: "none"
+    restart: unless-stopped
+    networks:
+      - internal
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    driver: local
+
+networks:
+  traefik_gateway:
+    name: traefik_gateway
+    external: true
+  internal:

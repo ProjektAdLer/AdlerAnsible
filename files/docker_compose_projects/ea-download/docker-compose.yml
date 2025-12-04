@@ -1,0 +1,25 @@
+services:
+  ea_postgres:
+    image: postgres:14
+    networks:
+      - traefik_gateway
+    environment:
+      POSTGRES_USER: ea_user
+      POSTGRES_PASSWORD: ${_POSTGRES_PASSWORD}
+    volumes:
+      - ea_postgres:/var/lib/postgresql/data
+    restart: "unless-stopped"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.ea_postgres.entrypoints=ea_postgres"
+      - "traefik.tcp.routers.ea_postgres.rule=HostSNI(`*`)"
+      - "traefik.tcp.services.universio.loadbalancer.server.port=5432"
+
+volumes:
+  ea_postgres:
+    driver: local
+
+networks:
+  traefik_gateway:
+    name: traefik_gateway
+    external: true

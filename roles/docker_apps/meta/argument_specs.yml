@@ -1,0 +1,33 @@
+argument_specs:
+  main:
+    short_description: Deploy a docker compose project
+    author:
+      - Markus Heck
+    options:
+      docker_apps_projects:
+        type: list
+        required: true
+        description: List of docker compose projects to deploy
+        elements: dict
+        suboptions:
+          name:
+            type: str
+            required: true
+            description: Folder Name of the docker compose project
+          state:
+            type: str
+            required: false
+            default: present
+            choices:
+              - present
+              - absent
+            description: State of the docker compose project
+          env_vars:
+            type: dict
+            required: false
+            description: Environment variables to be used in the docker compose templates
+      docker_apps_base_path:
+        type: str
+        required: false
+        default: /opt/docker-apps
+        description: Base path where docker compose projects are located

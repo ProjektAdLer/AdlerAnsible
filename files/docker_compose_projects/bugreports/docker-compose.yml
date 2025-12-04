@@ -1,0 +1,19 @@
+services:
+  apache:
+    image: ghcr.io/projektadler/bugreportpage:latest
+    environment:
+      APP_WEBHOOKURL: ${_APP_WEBHOOKURL}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bugreports.rule=Host(`bugreport.projekt-adler.eu`)"
+      - "traefik.http.routers.bugreports.tls=true"
+      - "traefik.http.routers.bugreports.tls.certresolver=le"
+      - "traefik.http.routers.bugreports.entrypoints=websecure"
+    networks:
+      - traefik_gateway
+    restart: unless-stopped
+
+networks:
+  traefik_gateway:
+    name: traefik_gateway
+    external: true

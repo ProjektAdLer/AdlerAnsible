@@ -1,0 +1,30 @@
+- name: Stop and remove compose project
+  when: docker_apps_project.state | default('present') == 'absent'
+  block:
+    - name: Stop docker compose project
+      community.docker.docker_compose_v2:
+      project_src: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}"
+      state: absent
+    - name: Remove application directories
+      ansible.builtin.file:
+        path: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}"
+        state: absent
+
+- name: Deploy docker compose project
+  when: docker_apps_project.state | default('present') == 'present'
+  block:
+  - name: Create application directories
+    ansible.builtin.file:
+      path: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}"
+      state: directory
+      owner: root
+      group: root
+      mode: 755
+  - name: Upload files
+    ansible.builtin.include_tasks: ../tasks/upload_app_files.yml
+    vars:
+      docker_apps_project: "{{ docker_apps_project }}"
+  - name: Start docker compose project
+    community.docker.docker_compose_v2:
+      project_src: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}"
+      state: present

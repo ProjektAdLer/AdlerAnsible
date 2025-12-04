@@ -1,0 +1,17 @@
+---
+
+- name: Ensure docker_apps_base_path exists
+  file:
+    path: "{{ docker_apps_base_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy docker compose project
+  include_tasks: deploy_docker_compose.yml
+  loop: "{{ docker_apps_projects }}"
+  loop_control:
+    label: "{{ item.name }}"
+  vars:
+    docker_apps_project: "{{ item }}"

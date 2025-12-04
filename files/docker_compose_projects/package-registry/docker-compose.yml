@@ -1,0 +1,25 @@
+services:
+  nginx-package-registry:
+    image: ghcr.io/projektadler/packageregistry:0.2.1
+    volumes:
+      - packages:/var/packages
+    environment:
+      UPLOAD_USER: ${UPLOAD_USER}
+      UPLOAD_PASS: ${UPLOAD_PASSWORD}
+    networks:
+      - traefik_gateway
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.packageregistry.rule=Host(`packages.projekt-adler.eu`)"
+      - "traefik.http.routers.packageregistry.tls=true"
+      - "traefik.http.routers.packageregistry.tls.certresolver=le"
+      - "traefik.http.routers.packageregistry.entrypoints=websecure"
+    restart: "unless-stopped"
+
+volumes:
+  packages:
+
+networks:
+  traefik_gateway:
+    name: traefik_gateway
+    external: true
