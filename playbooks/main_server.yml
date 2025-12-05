@@ -70,24 +70,24 @@
               - name: bugreports
                 state: present
                 env_vars:
-                  webhookurl: "TODO"
+                  webhookurl: "{{ docker_secrets.bugreports.webhookurl }}"
               - name: ea-download
                 state: present
                 env_vars:
-                  postgres_password: "TODO"
+                  postgres_password: "{{ docker_secrets.ea_download.postgres_password }}"
               - name: github_runner
                 state: present
                 env_vars:
-                  github_runner_token: "TODO"
+                  github_runner_token: "{{ docker_secrets.github_runner.github_runner_token }}"
               - name: nextcloud
                 state: present
                 env_vars:
-                  mysql_root_password: "TODO"
-                  mysql_password: "TODO"
+                  mysql_root_password: "{{ docker_secrets.nextcloud.mysql_root_password }}"
+                  mysql_password: "{{ docker_secrets.nextcloud.mysql_password }}"
               - name: package-registry
                 state: present
                 env_vars:
-                  upload_password: "TODO"
+                  upload_password: "{{ docker_secrets.package_registry.upload_password }}"
               - name: portainer
                 state: present
               - name: traefik
