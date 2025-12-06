@@ -1,0 +1,55 @@
+version: "1"
+
+global:
+  scheduler: crond
+  priority: low
+  default-command: snapshots
+  min-memory: 100
+  initialize: false
+
+default:
+  full-backup:
+    - local
+
+local:
+  repository: /host/media/bigdata/restic/docker
+  password-file: /resticprofile/passwords/local.txt
+
+  backup:
+    source:
+      - /host/media/bigdata/docker
+      - /host/opt/docker-apps
+    tag:
+      - docker_backup
+    schedule: daily
+    schedule-permission: system
+    force-inactive-lock: true
+
+#  retention:
+#    keep-last: 2
+#    keep-daily: 7
+#    keep-weekly: 4
+#    keep-monthly: 12
+#    keep-yearly: 3
+#    prune: true
+
+ab:
+  repository: "rest:https://{{docker_compose_projects.resticprofile.env_vars.repos.ab.rest_username}}:{{docker_compose_projects.resticprofile.env_vars.repos.ab.rest_password}}@{{docker_compose_projects.resticprofile.env_vars.repos.ab.rest_repo_url}}"
+  password-file: /resticprofile/passwords/ab.txt
+
+  backup:
+    source:
+      - /host/media/bigdata/docker/volumes/adler_*
+    tag:
+      - docker_backup
+    schedule: daily
+    schedule-permission: system
+    force-inactive-lock: true
+
+#  retention:
+#    keep-last: 2
+#    keep-daily: 7
+#    keep-weekly: 4
+#    keep-monthly: 12
+#    keep-yearly: 3
+#    prune: true

@@ -1,0 +1,10 @@
+services:
+  resticprofile:
+    image: ghcr.io/creativeprojects/resticprofile:latest
+    volumes:
+      - $PWD/config:/resticprofile:ro
+      - /:/host:ro
+    restart: unless-stopped
+    hostname: debian-adler
+    entrypoint: /bin/sh
+    command: -c "resticprofile schedule --all && crond -f"

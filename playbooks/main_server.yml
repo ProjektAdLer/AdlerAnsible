@@ -9,43 +9,44 @@
         state: present
         cache_valid_time: 86400
 
-    - name: restic backup
-      include_role:
-        name: roles-ansible.restic
-      vars:
-        restic_repos:
-          local:
-            location: /media/bigdata/restic/docker
-            password: "{{ backup_secrets.local.encryption_password }}"
-          ab:
-            location: "rest:https://{{backup_config.ab.rest_username}}:{{backup_secrets.ab.rest_password}}@{{backup_config.ab.rest_repo_url}}"
-            password: "{{ backup_secrets.ab.encryption_password }}"
-        restic_backups:
-          - name: "docker_backup"
-            repo: local
-            src: "/media/bigdata/docker /opt/docker-apps"
-            keep_last: 2
-            keep_daily: 7
-            keep_weekly: 4
-            keep_monthly: 12
-            keep_yearly: 3
-            prune: true
-            scheduled: true
-          - name: "ab_docker_backup"
-            repo: ab
-            src: "/media/bigdata/docker/volumes/adler_*"
-            keep_last: 2
-            keep_daily: 7
-            keep_weekly: 4
-            keep_monthly: 12
-            keep_yearly: 3
-            prune: true
-            scheduled: true
-#            exclude:
-#              - "/media/bigdata/docker/volumes/*"
-#              - "!/media/bigdata/docker/volumes/adler_*"
-        restic_create_schedule: true
-        restic__max_cpus: 16
+#    - name: restic backup
+#      include_role:
+#        name: roles-ansible.restic
+#      vars:
+#        restic_scheduler_type: cronjob
+#        restic_repos:
+#          local:
+#            location: /media/bigdata/restic/docker
+#            password: "{{ backup_secrets.local.encryption_password }}"
+#          ab:
+#            location: "rest:https://{{backup_config.ab.rest_username}}:{{backup_secrets.ab.rest_password}}@{{backup_config.ab.rest_repo_url}}"
+#            password: "{{ backup_secrets.ab.encryption_password }}"
+#        restic_backups:
+#          - name: "docker_backup"
+#            repo: local
+#            src: "/media/bigdata/docker /opt/docker-apps"
+#            keep_last: 2
+#            keep_daily: 7
+#            keep_weekly: 4
+#            keep_monthly: 12
+#            keep_yearly: 3
+#            prune: true
+#            scheduled: true
+#          - name: "ab_docker_backup"
+#            repo: ab
+#            src: "/media/bigdata/docker/volumes/adler_*"
+#            keep_last: 2
+#            keep_daily: 7
+#            keep_weekly: 4
+#            keep_monthly: 12
+#            keep_yearly: 3
+#            prune: true
+#            scheduled: true
+##            exclude:
+##              - "/media/bigdata/docker/volumes/*"
+##              - "!/media/bigdata/docker/volumes/adler_*"
+#        restic_create_schedule: true
+#        restic__max_cpus: 16
 
     - name: Docker projects
       block:
@@ -67,6 +68,17 @@
           vars:
             docker_apps_base_path: /opt/docker-apps
             docker_apps_projects:
+              - name: resticprofile
+                state: present
+                env_vars:
+                  repos:
+                    local:
+                      password: "{{ docker_secrets.resticprofile.restic_local_password }}"
+                    ab:
+                        password: "{{ docker_secrets.resticprofile.restic_ab_password }}"
+                        rest_username: backup
+                        rest_repo_url: "rest:https://restic.ab.projekt-adler.eu/backup"
+                        rest_password: "{{ docker_secrets.resticprofile.restic_ab_rest_password }}"
               - name: bugreports
                 state: present
                 env_vars:
