@@ -1,12 +1,12 @@
 ---
 
-- name: "{{ docker_apps_project.name }} | Scan project files"
+- name: "{{ docker_apps_app_name }} | Scan project files"
   set_fact:
-    project_files: "{{ lookup('community.general.filetree', 'files/docker_compose_projects/' + docker_apps_project.name) }}"
+    project_files: "{{ lookup('community.general.filetree', 'files/docker_compose_projects/' + docker_apps_app_name) }}"
 
-- name: "{{ docker_apps_project.name }} | Create subdirectories"
+- name: "{{ docker_apps_app_name }} | Create subdirectories"
   file:
-    path: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}/{{ item.path }}"
+    path: "{{ docker_apps_base_path }}/{{ docker_apps_app_name }}/{{ item.path }}"
     state: directory
     mode: "{{ item.mode }}"
   loop: "{{ project_files }}"
@@ -14,10 +14,10 @@
   loop_control:
     label: "{{ item.path }}"
 
-- name: "{{ docker_apps_project.name }} | Copy non-template files"
+- name: "{{ docker_apps_app_name }} | Copy non-template files"
   copy:
     src: "{{ item.src }}"
-    dest: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}/{{ item.path }}"
+    dest: "{{ docker_apps_base_path }}/{{ docker_apps_app_name }}/{{ item.path }}"
     mode: "{{ item.mode }}"
   loop: "{{ project_files }}"
   when:
@@ -26,15 +26,15 @@
   loop_control:
     label: "{{ item.path }}"
 
-- name: "{{ docker_apps_project.name }} | Template .j2 files"
+- name: "{{ docker_apps_app_name }} | Template .j2 files"
   template:
     src: "{{ item.src }}"
-    dest: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}/{{ item.path | regex_replace('\\.j2$', '') }}"
+    dest: "{{ docker_apps_base_path }}/{{ docker_apps_app_name }}/{{ item.path | regex_replace('\\.j2$', '') }}"
     mode: "{{ item.mode }}"
   loop: "{{ project_files }}"
   vars:
-    # Make project variables available to templates
-    "{{ docker_apps_project.env_vars | default({}) }}"
+    docker_apps_project:
+      env_vars: "{{ docker_apps_app_env_vars }}"
   when:
     - item.state == 'file'
     - item.path.endswith('.j2')

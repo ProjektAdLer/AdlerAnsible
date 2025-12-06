@@ -8,8 +8,8 @@
     group: root
     mode: '0755'
 
-- name: Deploy docker compose project
-  include_tasks: deploy_docker_compose.yml
+- name: Deploy docker compose projects
+  include_tasks: "{{ role_path }}/tasks/deploy_app.yml"
   loop: "{{ docker_apps_projects }}"
   loop_control:
     label: "{{ item.name }}"
