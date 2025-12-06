@@ -2,14 +2,14 @@ ansible_user: "ansible"
 ansible_become_pass: "{{ vault_user_password_ansible }}"
 # ansible_ssh_private_key_file: "files/id_ed25519_ansible"
 
-user_ssh_pubkey_ansible: "{{ lookup('file', '../files/ssh_keys/id_ed25519_ansible.pub') }}"
+user_ssh_pubkey_ansible: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIR0jjya7pYiGrEu8PwD7UjlmVHA1doC8mM0yg/BZwMp markus@DESKTOP-1DT3KOR"
 
 system_users:
     - username: "markus"
       password_hash: "{{ vault_user_password_hash_markus }}"
       groups: sudo
       update_password: false
-      ssh_pubkey: "{{ lookup('file', '../files/ssh_keys/id_ed25519_markus.pub') }}"
+      ssh_pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPaGmLjsiL+Elc9tXcS/l+NAkKQTerAeIaq87Xn3ymEI markus 2024-08-09"
 
 
 system_packages:

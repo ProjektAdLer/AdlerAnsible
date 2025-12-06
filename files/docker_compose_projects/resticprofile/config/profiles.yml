@@ -34,7 +34,7 @@ local:
 #    prune: true
 
 ab:
-  repository: "rest:https://{{docker_compose_projects.resticprofile.env_vars.repos.ab.rest_username}}:{{docker_compose_projects.resticprofile.env_vars.repos.ab.rest_password}}@{{docker_compose_projects.resticprofile.env_vars.repos.ab.rest_repo_url}}"
+  repository: "rest:https://{{docker_apps_project.env_vars.repos.ab.rest_username}}:{{docker_apps_project.env_vars.repos.ab.rest_password}}@{{docker_apps_project.env_vars.repos.ab.rest_repo_url}}"
   password-file: /resticprofile/passwords/ab.txt
 
   backup:

@@ -3,11 +3,11 @@
   hosts: main_server
   become: yes
   tasks:
-    - name: Install restic
-      ansible.builtin.package:
-        name: restic
-        state: present
-        cache_valid_time: 86400
+#    - name: Install restic
+#      ansible.builtin.package:
+#        name: restic
+#        state: present
+#        cache_valid_time: 86400
 
 #    - name: restic backup
 #      include_role:
@@ -57,7 +57,7 @@
             cache_valid_time: 3600
 
         - name: Create docker network
-          ansible.builtin.docker_network:
+          community.docker.docker_network:
             name: traefik_gateway
             state: present
             driver: bridge
