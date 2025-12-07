@@ -31,7 +31,8 @@ local:
 
   retention:
     after-backup: true
-    path: false  # do not group by path
+    path: false
+    group-by: "host"
     keep-last: 2
     keep-daily: 7
     keep-weekly: 4
