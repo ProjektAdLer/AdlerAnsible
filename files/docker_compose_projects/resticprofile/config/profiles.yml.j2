@@ -13,15 +13,19 @@ default:
 
 local:
   repository: /host/media/bigdata/restic/docker
-  password-file: /resticprofile/passwords/local.txt
+  password-file: /etc/resticprofile/passwords/local.txt
 
   backup:
     source:
-      - /host/media/bigdata/docker
+      - /host/media/bigdata/docker/volumes
       - /host/opt/docker-apps
+    exclude:
+      # prevent recursive backup of restic files
+      - "3d8e250ee8e3c3add444f63cd370adaedb63eb82fb431c5b2e586bf499eb7c8d"
+      - "resticprofile"
     tag:
       - docker_backup
-    schedule: daily
+    schedule: "*-*-* 03/6:14"
     schedule-permission: system
     force-inactive-lock: true
 
@@ -34,15 +38,20 @@ local:
 #    prune: true
 
 ab:
-  repository: "rest:https://{{docker_apps_project.env_vars.repos.ab.rest_username}}:{{docker_apps_project.env_vars.repos.ab.rest_password}}@{{docker_apps_project.env_vars.repos.ab.rest_repo_url}}"
-  password-file: /resticprofile/passwords/ab.txt
+  repository: "rest:https://{{docker_apps_project.env_vars.repos.ab.rest_repo_url}}"
+  password-file: /etc/resticprofile/passwords/ab.txt
+
+  env:
+    RESTIC_REST_USERNAME: "{{ docker_apps_project.env_vars.repos.ab.rest_username }}"
+    RESTIC_REST_PASSWORD: "{{ docker_apps_project.env_vars.repos.ab.rest_password }}"
+
 
   backup:
     source:
       - /host/media/bigdata/docker/volumes/adler_*
     tag:
       - docker_backup
-    schedule: daily
+    schedule: "*-*-* 04/6:36"
     schedule-permission: system
     force-inactive-lock: true
 

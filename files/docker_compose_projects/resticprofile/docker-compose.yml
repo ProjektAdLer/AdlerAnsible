@@ -2,8 +2,8 @@ services:
   resticprofile:
     image: ghcr.io/creativeprojects/resticprofile:latest
     volumes:
-      - $PWD/config:/resticprofile:ro
-      - /:/host:ro
+      - $PWD/config:/etc/resticprofile:ro
+      - /:/host  # not read-only because there is a repo on the host
     restart: unless-stopped
     hostname: debian-adler
     entrypoint: /bin/sh

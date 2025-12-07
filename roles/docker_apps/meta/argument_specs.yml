@@ -30,4 +30,9 @@ argument_specs:
         type: str
         required: false
         default: /opt/docker-apps
-        description: Base path where docker compose projects are located
+        description: Base path where docker compose projects will be located on the target system
+      docker_apps_source_path:
+        type: str
+        required: false
+        description: Source path where docker compose project templates are located in the ansible project. Relative to files/ directory.
+        default: "docker_compose_projects"

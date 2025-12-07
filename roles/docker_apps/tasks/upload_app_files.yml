@@ -2,41 +2,54 @@
 
 - name: "{{ docker_apps_app_name }} | Scan project files"
   set_fact:
-    project_files: "{{ lookup('community.general.filetree', 'files/docker_compose_projects/' + docker_apps_app_name) }}"
+    project_files: "{{ lookup('community.general.filetree', docker_apps_app_source_path) }}"
 
 - name: "{{ docker_apps_app_name }} | Create subdirectories"
   file:
-    path: "{{ docker_apps_base_path }}/{{ docker_apps_app_name }}/{{ item.path }}"
+    path: "{{ docker_apps_base_path }}/{{ docker_apps_app_name }}/{{ create_dir_item.path }}"
     state: directory
-    mode: "{{ item.mode }}"
+    mode: "{{ create_dir_item.mode }}"
   loop: "{{ project_files }}"
-  when: item.state == 'directory'
+  when: create_dir_item.state == 'directory'
   loop_control:
-    label: "{{ item.path }}"
+    loop_var: create_dir_item
+    label: "{{ create_dir_item.path }}"
+  register: subdir_result
+  changed_when: subdir_result.changed
 
 - name: "{{ docker_apps_app_name }} | Copy non-template files"
   copy:
-    src: "{{ item.src }}"
-    dest: "{{ docker_apps_base_path }}/{{ docker_apps_app_name }}/{{ item.path }}"
-    mode: "{{ item.mode }}"
+    src: "{{ copy_item.src }}"
+    dest: "{{ docker_apps_base_path }}/{{ docker_apps_app_name }}/{{ copy_item.path }}"
+    mode: "{{ copy_item.mode }}"
   loop: "{{ project_files }}"
   when:
-    - item.state == 'file'
-    - not item.path.endswith('.j2')
+    - copy_item.state == 'file'
+    - not copy_item.path.endswith('.j2')
   loop_control:
-    label: "{{ item.path }}"
+    loop_var: copy_item
+    label: "{{ copy_item.path }}"
+  register: copy_result
+  changed_when: copy_result.changed
 
 - name: "{{ docker_apps_app_name }} | Template .j2 files"
   template:
-    src: "{{ item.src }}"
-    dest: "{{ docker_apps_base_path }}/{{ docker_apps_app_name }}/{{ item.path | regex_replace('\\.j2$', '') }}"
-    mode: "{{ item.mode }}"
+    src: "{{ copy_item.src }}"
+    dest: "{{ docker_apps_base_path }}/{{ docker_apps_app_name }}/{{ copy_item.path | regex_replace('\\.j2$', '') }}"
+    mode: "{{ copy_item.mode }}"
   loop: "{{ project_files }}"
   vars:
     docker_apps_project:
       env_vars: "{{ docker_apps_app_env_vars }}"
   when:
-    - item.state == 'file'
-    - item.path.endswith('.j2')
+    - copy_item.state == 'file'
+    - copy_item.path.endswith('.j2')
   loop_control:
-    label: "{{ item.path }}"
+    loop_var: copy_item
+    label: "{{ copy_item.path }}"
+  register: templating_result
+  changed_when: templating_result.changed
+
+- name: "{{ docker_apps_app_name }} | Set upload_result"
+  set_fact:
+    upload_result: "{{ subdir_result | combine(copy_result) | combine(templating_result) }}"
