@@ -1,4 +1,3 @@
 ---
 - import_playbook: playbooks/common.yml
-- import_playbook: playbooks/_backup_server.yml
 - import_playbook: playbooks/main_server.yml
