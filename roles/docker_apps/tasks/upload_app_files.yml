@@ -2,7 +2,7 @@
 
 - name: "{{ docker_apps_app_name }} | Scan project files"
   set_fact:
-    project_files: "{{ lookup('community.general.filetree', docker_apps_app_source_path) }}"
+    project_files: "{{ query('community.general.filetree', docker_apps_app_source_path) }}"
 
 - name: "{{ docker_apps_app_name }} | Create subdirectories"
   file:

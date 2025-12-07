@@ -77,7 +77,7 @@
                     ab:
                         password: "{{ docker_secrets.resticprofile.restic_ab_password }}"
                         rest_username: backup
-                        rest_repo_url: "rest:https://restic.ab.projekt-adler.eu/backup"
+                        rest_repo_url: "restic.ab.projekt-adler.eu/backup"
                         rest_password: "{{ docker_secrets.resticprofile.restic_ab_rest_password }}"
               - name: bugreports
                 state: present
@@ -106,3 +106,16 @@
                 state: present
               - name: wikijs
                 state: present
+
+        - name: Ensure github runners are running
+          block:
+            - name: Check github runner watchdog container
+              community.docker.docker_container_info:
+                name: github-runner-1-watchdog-1
+              register: github_runner_watchdog
+
+            - name: Start github runners when watchdog is missing or stopped
+              ansible.builtin.command: "{{ docker_apps_base_path }}/github_runner/manage_runners.sh start"
+              when: github_runner_watchdog.container is not defined or
+                    github_runner_watchdog.container.State.Status != "running"
+              changed_when: true

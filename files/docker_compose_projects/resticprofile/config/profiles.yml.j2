@@ -18,7 +18,7 @@ local:
   backup:
     source:
       - /host/media/bigdata/docker/volumes
-      - /host/opt/docker-apps
+      - /host{{ docker_apps_base_path }}
     exclude:
       # prevent recursive backup of restic files
       - "3d8e250ee8e3c3add444f63cd370adaedb63eb82fb431c5b2e586bf499eb7c8d"
