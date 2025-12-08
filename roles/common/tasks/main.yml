@@ -16,6 +16,7 @@
         groups: sudo
         update_password: true
         ssh_pubkey: "{{ common_user_ssh_pubkey_ansible }}"
+        ssh_pubkey_replace: true
 
 - block:
     - name: Disable SSH login for root user

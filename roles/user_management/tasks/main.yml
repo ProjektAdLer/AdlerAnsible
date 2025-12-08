@@ -24,13 +24,27 @@
   loop_control:
     loop_var: user_item
 
-- name: copy public key
+- name: copy public key (replace mode)
   ansible.builtin.copy:
     content: "{{ user_item.ssh_pubkey }}"
     dest: "/home/{{ user_item.username }}/.ssh/authorized_keys"
     owner: "{{ user_item.username }}"
     group: "{{ user_item.username }}"
     mode: '0600'
+  when: user_item.ssh_pubkey_replace | default(false)
+  loop: "{{ user_management_users }}"
+  loop_control:
+    loop_var: user_item
+
+- name: ensure public key is present (append mode)
+  ansible.builtin.lineinfile:
+    path: "/home/{{ user_item.username }}/.ssh/authorized_keys"
+    line: "{{ user_item.ssh_pubkey }}"
+    owner: "{{ user_item.username }}"
+    group: "{{ user_item.username }}"
+    mode: '0600'
+    create: true
+  when: not (user_item.ssh_pubkey_replace | default(false))
   loop: "{{ user_management_users }}"
   loop_control:
     loop_var: user_item

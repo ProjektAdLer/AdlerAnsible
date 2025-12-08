@@ -18,6 +18,10 @@ argument_specs:
             type: str
             required: true
             description: Public SSH key for the user
+          ssh_pubkey_replace:
+            type: bool
+            default: false
+            description: Whether to replace the authorized_keys file or append the key
           password_hash:
             type: str
             required: false
