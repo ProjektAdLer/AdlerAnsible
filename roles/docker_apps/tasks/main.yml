@@ -1,5 +1,12 @@
 ---
 
+- name: Install docker package
+  when: docker_apps_install_docker
+  ansible.builtin.package:
+    name: docker.io
+    state: present
+    cache_valid_time: 3600
+
 - name: Ensure docker_apps_base_path exists
   file:
     path: "{{ docker_apps_base_path }}"

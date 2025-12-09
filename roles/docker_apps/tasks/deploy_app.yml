@@ -1,12 +1,12 @@
 - name: "{{ docker_apps_project.name }} | Stop and remove compose project"
   when: docker_apps_project.state | default('present') == 'absent'
   block:
-    - name: Stop docker compose project
+    - name: "{{ docker_apps_project.name }} | Stop docker compose project"
       community.docker.docker_compose_v2:
         project_src: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}"
         state: absent
 
-    - name: Remove application directories
+    - name: "{{ docker_apps_project.name }} | Remove application directories"
       ansible.builtin.file:
         path: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}"
         state: absent
