@@ -16,6 +16,7 @@
             name: ../roles/docker_apps
           vars:
             docker_apps_install_docker: false # TODO
+            docker_apps_update_containers: "{{ update_docker | default(false) | bool }}"
             docker_apps_base_path: /opt/docker-apps
             docker_apps_projects:
               - name: resticprofile
@@ -63,5 +64,6 @@
           include_role:
             name: ../roles/docker_github_runner
           vars:
+            docker_github_runner_update_containers: "{{ update_docker | default(false) | bool }}"
             docker_github_runner_github_runner_token: "{{ docker_secrets.github_runner.github_runner_token }}"
 

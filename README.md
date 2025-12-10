@@ -20,3 +20,11 @@ Run the script as root user on the target server.
   `openssl passwd -6`
 - show role documentation:
   `ansible-doc -r roles/ -t role docker_apps`
+
+## Updates
+To install updates set the following variables when running the playbook via `-e <var>=<value>`:
+- `update_docker=true` to update docker images and recreate containers to apply the updates
+- `update_system=true` to update the underlying system packages
+  - `update_system_auto_upgrade` ⚠️ WARNING ⚠️ use with caution! \
+  can be set to `true` to enable automatic system updates via unattended-upgrades
+

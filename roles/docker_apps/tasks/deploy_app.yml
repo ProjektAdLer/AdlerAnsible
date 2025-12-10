@@ -39,3 +39,11 @@
       project_src: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}"
       state: present
     when: upload_result is not changed
+
+  - name: "{{ docker_apps_project.name }} | Update"
+    when: docker_apps_update_containers
+    community.docker.docker_compose_v2:
+      project_src: "{{ docker_apps_base_path }}/{{ docker_apps_project.name }}"
+      pull: yes
+      state: restarted
+

@@ -3,7 +3,6 @@
 - name: update apt cache
   ansible.builtin.apt:
     update_cache: yes
-    cache_valid_time: 3600
   changed_when: false
 
 - name: List available updates
@@ -21,11 +20,16 @@
       ansible.builtin.pause:
         prompt: "Do you want to apply the updates listed above? (yes/no)"
       register: update_confirmation
-      when: system_update_auto_upgrade_enabled | default(false) == false
+      when: system_update_auto_upgrade_enabled == false
 
-    - name: Apply updates
-      ansible.builtin.apt:
-        upgrade: dist
-        autoremove: yes
-      when: update_confirmation.user_input == 'yes' or system_update_auto_upgrade_enabled | default(false) == true
+    - name: Install updates
+      when: update_confirmation.user_input == 'yes' or system_update_auto_upgrade_enabled
+      block:
+      - name: Apply updates
+        ansible.builtin.apt:
+          upgrade: dist
+          autoremove: yes
+      - name: Inform user he might want to reboot
+        ansible.builtin.debug:
+          msg: "System updates have been applied. You might want to reboot the system."
   when: update_list.stdout_lines | length > 1

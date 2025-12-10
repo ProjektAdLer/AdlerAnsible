@@ -41,3 +41,8 @@ argument_specs:
         required: false
         description: Source path where docker compose project templates are located in the ansible project. Relative to files/ directory or absolute path.
         default: "docker_compose_projects"
+      docker_apps_update_containers:
+        type: bool
+        required: false
+        default: false
+        description: Update all containers of the docker compose projects to the latest image versions. This will restart the containers.

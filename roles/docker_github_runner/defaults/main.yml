@@ -1,2 +1,3 @@
 docker_github_runner_base_path: /opt/docker-apps
 docker_github_runner_state: present
+docker_github_runner_update_containers: false

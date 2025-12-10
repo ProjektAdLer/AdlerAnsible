@@ -1,3 +1,4 @@
 docker_apps_base_path: /opt/docker-apps
 docker_apps_source_path: "docker_compose_projects"
 docker_apps_install_docker: false
+docker_apps_update_containers: false

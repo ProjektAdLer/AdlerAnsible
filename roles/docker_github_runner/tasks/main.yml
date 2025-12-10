@@ -12,6 +12,13 @@
           github_runner_token: "{{ docker_github_runner_github_runner_token }}"
           docker_apps_base_path: "{{ docker_github_runner_base_path }}"
           docker_apps_source_path: "{{ role_path }}/files"
+          docker_apps_update_containers: "{{ docker_github_runner_update_containers }}"
+
+- name: Update github runner containers
+  when: docker_github_runner_update_containers
+  ansible.builtin.shell: |
+    {{ docker_github_runner_base_path }}/github_runner/manage_runners.sh stop
+    {{ docker_github_runner_base_path }}/github_runner/manage_runners.sh start
 
 - name: Ensure github runners are running
   block:

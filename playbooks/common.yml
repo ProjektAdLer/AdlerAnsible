@@ -3,10 +3,12 @@
   hosts: all
   become: yes
   tasks:
-    - name: Include system_update role
+    - name: Install system updates
       ansible.builtin.include_role:
         name: ../roles/system_update
-      when: system_updates.upgrade_enabled | default(false)
+      when: update_system | default(false) | bool
+      vars:
+        system_update_auto_upgrade_enabled: "{{ update_system_auto_upgrade | default(false) | bool }}"
 
     - name: Create system users
       ansible.builtin.include_role:

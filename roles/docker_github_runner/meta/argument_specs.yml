@@ -21,3 +21,8 @@ argument_specs:
         type: str
         required: true
         description: GitHub Runner token to register the runner with GitHub
+      docker_github_runner_update_containers:
+        type: bool
+        required: false
+        default: false
+        description: Update all containers of the docker compose project to the latest image versions. This will restart the containers.
