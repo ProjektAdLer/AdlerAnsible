@@ -28,3 +28,8 @@ To install updates set the following variables when running the playbook via `-e
   - `update_system_auto_upgrade` ⚠️ WARNING ⚠️ use with caution! \
   can be set to `true` to enable automatic system updates via unattended-upgrades
 
+
+
+todos
+- monitoring prometheus (incl backup monitoring)
+- gitops ohne portainer https://github.com/kimdre/doco-cd
