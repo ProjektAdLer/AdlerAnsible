@@ -4,12 +4,11 @@
   include_role:
     name: ../roles/docker_apps
   vars:
-    docker_apps_base_path: /opt/docker-apps
+    docker_apps_base_path: "{{ docker_github_runner_base_path }}"
     docker_apps_projects:
       - name: github_runner
         state: "{{ docker_github_runner_state }}"
         env_vars:
-          github_runner_token: "{{ docker_github_runner_github_runner_token }}"
           docker_apps_base_path: "{{ docker_github_runner_base_path }}"
           docker_apps_source_path: "{{ role_path }}/files"
           docker_apps_update_containers: "{{ docker_github_runner_update_containers }}"

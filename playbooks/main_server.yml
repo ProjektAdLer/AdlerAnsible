@@ -38,10 +38,6 @@
                 state: present
                 env_vars:
                   postgres_password: "{{ docker_secrets.ea_download.postgres_password }}"
-              - name: github_runner
-                state: present
-                env_vars:
-                  github_runner_token: "{{ docker_secrets.github_runner.github_runner_token }}"
               - name: nextcloud
                 state: present
                 env_vars:
