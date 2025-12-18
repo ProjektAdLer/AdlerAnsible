@@ -1,0 +1,24 @@
+services:
+  prometheus:
+    image: prom/prometheus:{{ docker_app_monitoring_server_prometheus_version }}
+    ports:
+     - "{{docker_app_monitoring_server_prometheus_listen_host}}:{{docker_app_monitoring_server_prometheus_listen_port}}:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - --storage.tsdb.retention.time=30d
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:{{ docker_app_monitoring_server_grafana_version }}
+    ports:
+        - "{{docker_app_monitoring_server_grafana_listen_host}}:{{docker_app_monitoring_server_grafana_listen_port}}:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
+  grafana_data:

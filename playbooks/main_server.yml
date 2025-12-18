@@ -63,3 +63,10 @@
             docker_github_runner_update_containers: "{{ update_docker | default(false) | bool }}"
             docker_github_runner_github_runner_token: "{{ docker_secrets.github_runner.github_runner_token }}"
 
+        - name: Deploy monitoring stack
+          include_role:
+            name: ../roles/docker_app_monitoring_server
+          vars:
+            docker_app_monitoring_server_update_containers: "{{ update_docker | default(false) | bool }}"
+#            docker_app_monitoring_server_prometheus_scrape_configs_static_configs:
+#              - host: "localhost"

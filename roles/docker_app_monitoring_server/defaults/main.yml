@@ -1,0 +1,15 @@
+docker_app_monitoring_server_base_path: "/opt/docker-apps"
+docker_app_monitoring_server_state: "present"
+docker_app_monitoring_server_update_containers: false
+
+
+docker_app_monitoring_server_prometheus_version: "latest"
+docker_app_monitoring_server_prometheus_listen_port: 9090
+docker_app_monitoring_server_prometheus_listen_host: "127.0.0.1"
+docker_app_monitoring_server_prometheus_scrape_interval: "15s"
+docker_app_monitoring_server_prometheus_scrape_configs_static_configs: []
+
+
+docker_app_monitoring_server_grafana_version: "latest"
+docker_app_monitoring_server_grafana_listen_port: 3000
+docker_app_monitoring_server_grafana_listen_host: "127.0.0.1"

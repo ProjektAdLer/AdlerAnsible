@@ -1,0 +1,79 @@
+argument_specs:
+  main:
+    short_description: Deploys Docker based monitoring stack
+    author:
+      - Markus Heck
+    options:
+      docker_app_monitoring_server_base_path:
+        type: str
+        required: false
+        default: /opt/docker-apps
+        description: Base path where docker compose project folder will be located on the target system
+      docker_app_monitoring_server_state:
+        type: str
+        required: false
+        default: present
+        choices:
+          - present
+          - absent
+        description: State of the docker compose project
+      docker_app_monitoring_server_update_containers:
+        type: bool
+        required: false
+        default: false
+        description: Update all containers of the docker compose project to the latest image versions. This will restart the containers.
+      docker_app_monitoring_server_prometheus_version:
+        type: str
+        required: false
+        default: "latest"
+        description: Prometheus Docker image (prom/prometheus) version
+      docker_app_monitoring_server_prometheus_listen_port:
+        type: int
+        required: false
+        default: 9090
+        description: Prometheus listen port
+      docker_app_monitoring_server_prometheus_listen_host:
+        type: str
+        required: false
+        default: "127.0.0.1"
+        description: Prometheus listen host
+      docker_app_monitoring_server_prometheus_scrape_interval:
+        type: str
+        required: false
+        default: "15s"
+        description: Prometheus scrape interval
+      docker_app_monitoring_server_prometheus_scrape_configs_static_configs:
+        type: list
+        required: false
+        default: []
+        description: List of static scrape configs
+        elements: dict
+        options:
+          host:
+            type: str
+            required: true
+            description: Target host
+          port:
+            type: int
+            required: false
+            default: 9100
+            description: Target port
+          comment:
+            type: str
+            required: false
+            description: Optional comment for the target
+      docker_app_monitoring_server_grafana_version:
+        type: str
+        required: false
+        default: "latest"
+        description: Grafana Docker image (grafana/grafana-oss) version
+      docker_app_monitoring_server_grafana_listen_port:
+        type: int
+        required: false
+        default: 3000
+        description: Grafana listen port
+      docker_app_monitoring_server_grafana_listen_host:
+        type: str
+        required: false
+        default: "127.0.0.1"
+        description: Grafana listen host
