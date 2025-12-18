@@ -14,7 +14,7 @@ services:
       - MYSQL_USER=nextcloud
 
   app:
-    image: nextcloud:31.0.4-fpm
+    image: nextcloud:31.0.12-fpm
     restart: unless-stopped
     links:
       - db
@@ -32,7 +32,7 @@ services:
       - MYSQL_HOST=db
 
   cron:
-    image: nextcloud:31.0.4-fpm
+    image: nextcloud:31.0.12-fpm
     restart: always
     volumes:
       - nextcloud:/var/www/html
