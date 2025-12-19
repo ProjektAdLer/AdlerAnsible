@@ -11,6 +11,37 @@
             state: present
             driver: bridge
 
+        - name: node exporter
+          block:
+            - name: Install Prometheus Node Exporter
+              ansible.builtin.apt:
+                name: prometheus-node-exporter
+                state: present
+                update_cache: yes
+                cache_valid_time: 86400 # 1 day
+
+            - name: Create Node Exporter textfile directory
+              ansible.builtin.file:
+                path: "/var/lib/node_exporter/textfile_collector"
+                state: directory
+                owner: root
+                group: root
+                mode: 0755
+
+            - name: Node Exporter start parameters
+              ansible.builtin.lineinfile:
+                path: /etc/default/prometheus-node-exporter
+                regexp: '^ARGS=".*'
+                line: 'ARGS="--web.listen-address 172.31.0.1:9100 --collector.textfile.directory /var/lib/node_exporter/textfile_collector"'
+                state: present
+              register: node_exporter_changed
+
+            - name: restart node exporter
+              when: node_exporter_changed is changed
+              ansible.builtin.systemd:
+                name: prometheus-node-exporter
+                state: restarted
+
         - name: Deploy docker apps
           include_role:
             name: ../roles/docker_apps
@@ -68,5 +99,5 @@
             name: ../roles/docker_app_monitoring_server
           vars:
             docker_app_monitoring_server_update_containers: "{{ update_docker | default(false) | bool }}"
-#            docker_app_monitoring_server_prometheus_scrape_configs_static_configs:
-#              - host: "localhost"
+            docker_app_monitoring_server_prometheus_scrape_configs_static_configs:
+              - host: "172.31.0.1"
