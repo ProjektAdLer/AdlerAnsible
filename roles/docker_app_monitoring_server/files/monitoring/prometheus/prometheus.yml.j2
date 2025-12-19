@@ -5,5 +5,5 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       {% for config in docker_app_monitoring_server_prometheus_scrape_configs_static_configs %}
-      - targets: ['{{ config.host }}:{{ config.port | default(9100) }}']{% if config.comment %}  # {{ config.comment }}{% endif %}
+      - targets: ['{{ config.host }}:{{ config.port | default(9100) }}']{% if config.comment is defined %}  # {{ config.comment }}{% endif %}
       {% endfor %}

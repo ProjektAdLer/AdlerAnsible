@@ -1,14 +1,17 @@
 ---
 
+- name: Define current role path
+  # without this, role_path is expanded inside the docker_apps role and then points to the docker_apps role path
+  set_fact:
+    current_role_path: "{{ role_path }}"
+
 - name: Deploy github runner docker compose project
   include_role:
     name: ../roles/docker_apps
   vars:
     docker_apps_base_path: "{{ docker_app_monitoring_server_base_path }}"
+    docker_apps_source_path: "{{ current_role_path }}/files"
+    docker_apps_update_containers: "{{ docker_app_monitoring_server_update_containers }}"
     docker_apps_projects:
       - name: monitoring
         state: "{{ docker_app_monitoring_server_state }}"
-        env_vars:
-          docker_apps_base_path: "{{ docker_app_monitoring_server_base_path }}"
-          docker_apps_source_path: "{{ role_path }}/files"
-          docker_apps_update_containers: "{{ docker_app_monitoring_server_update_containers }}"
