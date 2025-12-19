@@ -53,6 +53,7 @@
               - name: resticprofile
                 state: present
                 env_vars:
+                  host_prometheus_textfile_collector_path: "/var/lib/node_exporter/textfile_collector"
                   repos:
                     local:
                       password: "{{ docker_secrets.resticprofile.restic_local_password }}"

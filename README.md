@@ -34,5 +34,6 @@ To install updates set the following variables when running the playbook via `-e
 
 
 todos
-- backup monitoring, docker monitoring
+- backup monitoring dashboard
+- docker monitoring
 - gitops ohne portainer https://github.com/kimdre/doco-cd

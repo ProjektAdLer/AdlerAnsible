@@ -10,10 +10,15 @@ global:
 default:
   full-backup:
     - local
+    - ab
 
 local:
   repository: /host/media/bigdata/restic/docker
   password-file: /etc/resticprofile/passwords/local.txt
+
+{% if docker_apps_project.env_vars.host_prometheus_textfile_collector_path %}
+  prometheus-save-to-file: /metrics/restic_local_backup.prom
+{% endif %}
 
   backup:
     source:
@@ -21,7 +26,6 @@ local:
       - /host{{ docker_apps_base_path }}
     exclude:
       # prevent recursive backup of restic files
-      - "3d8e250ee8e3c3add444f63cd370adaedb63eb82fb431c5b2e586bf499eb7c8d"
       - "resticprofile"
     tag:
       - docker_backup
@@ -44,10 +48,13 @@ ab:
   repository: "rest:https://{{docker_apps_project.env_vars.repos.ab.rest_repo_url}}"
   password-file: /etc/resticprofile/passwords/ab.txt
 
+{% if docker_apps_project.env_vars.host_prometheus_textfile_collector_path %}
+  prometheus-save-to-file: /metrics/restic_ab_backup.prom
+{% endif %}
+
   env:
     RESTIC_REST_USERNAME: "{{ docker_apps_project.env_vars.repos.ab.rest_username }}"
     RESTIC_REST_PASSWORD: "{{ docker_apps_project.env_vars.repos.ab.rest_password }}"
-
 
   backup:
     source:

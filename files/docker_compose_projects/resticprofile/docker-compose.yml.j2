@@ -4,6 +4,9 @@ services:
     volumes:
       - $PWD/config:/etc/resticprofile:ro
       - /:/host  # not read-only because there is a repo on the host
+{% if docker_apps_project.env_vars.host_prometheus_textfile_collector_path %}
+      - {{ docker_apps_project.env_vars.host_prometheus_textfile_collector_path }}:/metrics:rw
+{% endif %}
     restart: unless-stopped
     hostname: debian-adler
     entrypoint: /bin/sh
