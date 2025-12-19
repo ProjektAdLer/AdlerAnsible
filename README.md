@@ -13,13 +13,16 @@ Run the script as root user on the target server.
 
 ## Commands
 - run playbook:
-  `ansible-playbook -i inventory/inventory.yml playbooks/common.yml --vault-password-file vault-password-file`
+  `ansible-playbook -i inventory/inventory.yml playbooks/site.yml --vault-password-file vault-password-file`
 - edit vault file:
   `EDITOR=nano ansible-vault edit group_vars/all/vault.yml --vault-password-file ./vault-password-file`
 - generate password hash
   `openssl passwd -6`
 - show role documentation:
   `ansible-doc -r roles/ -t role docker_apps`
+- access monitoring:
+  `ssh -L 3000:localhost:3000 <host>` then open `http://localhost:3000` in browser
+
 
 ## Updates
 To install updates set the following variables when running the playbook via `-e <var>=<value>`:
@@ -31,5 +34,5 @@ To install updates set the following variables when running the playbook via `-e
 
 
 todos
-- monitoring prometheus (incl backup monitoring)
+- backup monitoring, docker monitoring
 - gitops ohne portainer https://github.com/kimdre/doco-cd
